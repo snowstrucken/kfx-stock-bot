@@ -1,6 +1,6 @@
 const fs = require("fs");
 
-const RESTOCK_SECONDS = 30 * 60;
+const RESTOCK_SECONDS = 30 * 0.5;
 
 /*
 	This must match the Offset NumberValue used by Roblox.
