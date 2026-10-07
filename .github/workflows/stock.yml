@@ -1,0 +1,49 @@
+name: KFX Stock
+
+on:
+  schedule:
+    - cron: "2,32 * * * *"
+
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: kfx-stock-checker
+  cancel-in-progress: false
+
+jobs:
+  stock:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Check KFX stock
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          STOCK_OFFSET: ${{ vars.STOCK_OFFSET }}
+        run: node stock-checker.js
+
+      - name: Save restock state
+        run: |
+          if git diff --quiet stock-state.json; then
+            echo "Stock state did not change."
+            exit 0
+          fi
+
+          git config user.name "KFX Stock Bot"
+          git config user.email "actions@github.com"
+
+          git add stock-state.json
+          git commit -m "Update KFX stock state [skip ci]"
+          git push
