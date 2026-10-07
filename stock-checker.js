@@ -1,6 +1,9 @@
 const fs = require("fs");
 
-const RESTOCK_SECONDS = 30 * 0.5;
+env:
+  DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+  STOCK_OFFSET: ${{ vars.STOCK_OFFSET }}
+  RESTOCK_SECONDS: 30
 
 /*
 	This must match the Offset NumberValue used by Roblox.
